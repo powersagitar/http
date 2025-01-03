@@ -26,6 +26,7 @@ add_executable(
 
 target_link_libraries(
         socket_unittest
+        ${LIB_NAME}
         GTest::gtest_main
 )
 
