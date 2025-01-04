@@ -22,7 +22,7 @@ include(GoogleTest)
 
 add_executable(
         socket_unittest
-        socket_unittest.cc
+        tcpsocket_unittest.cc
 )
 
 target_link_libraries(

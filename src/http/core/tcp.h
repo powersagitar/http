@@ -4,8 +4,8 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-#ifndef SOCKET_H
-#define SOCKET_H
+#ifndef TCP_H
+#define TCP_H
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -175,4 +175,4 @@ class TcpServer {
 
 }  // namespace http
 
-#endif  // SOCKET_H
+#endif  // TCP_H
