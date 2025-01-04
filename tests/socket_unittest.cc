@@ -5,7 +5,7 @@
 // https://opensource.org/licenses/MIT.
 
 #include <gtest/gtest.h>
-#include <http/core/socket.h>
+#include <http/core/tcp.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 
@@ -37,7 +37,7 @@ void Server() {
   std::array<char, kBufSize> server_received{};
 
   const ssize_t bytes_read =
-      accepted_client.Read(server_received.data(), kBufSize - 1);
+      accepted_client.Recv(server_received.data(), kBufSize - 1);
 
   server_received.at(bytes_read) = '\0';
 

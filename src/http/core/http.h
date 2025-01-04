@@ -7,7 +7,7 @@
 #ifndef HTTP_H
 #define HTTP_H
 
-#include <sys/socket.h>
+#include <netinet/in.h>
 
 #include <cstddef>
 
