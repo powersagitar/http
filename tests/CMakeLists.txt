@@ -21,14 +21,27 @@ enable_testing()
 include(GoogleTest)
 
 add_executable(
-        socket_unittest
-        tcpsocket_unittest.cc
+        tcp_socket_unittest
+        tcp_socket_unittest.cc
 )
 
 target_link_libraries(
-        socket_unittest
+        tcp_socket_unittest
         ${LIB_NAME}
         GTest::gtest_main
 )
 
-gtest_discover_tests(socket_unittest)
+gtest_discover_tests(tcp_socket_unittest)
+
+add_executable(
+        http_request_unittest
+        http_request_unittest.cc
+)
+
+target_link_libraries(
+        http_request_unittest
+        ${LIB_NAME}
+        GTest::gtest_main
+)
+
+gtest_discover_tests(http_request_unittest)

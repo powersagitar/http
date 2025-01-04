@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 
+#include "request.h"
 #include "spdlog/spdlog.h"
 #include "tcp.h"
 
@@ -28,7 +29,7 @@ void Start(const Config config) {
   if (server.Bind(AF_INET, config.port, {INADDR_ANY}) == 0) {
     spdlog::info("Server socket bound successfully.");
   } else {
-    spdlog::error("Server socket failed to bind.");
+    spdlog::critical("Server socket failed to bind.");
   }
 
   spdlog::info("Listening on server socket...");
@@ -37,7 +38,7 @@ void Start(const Config config) {
   if (server.Listen() == 0) {
     spdlog::info("Listening on server socket.");
   } else {
-    spdlog::error("Failed to listen on server socket.");
+    spdlog::critical("Failed to listen on server socket.");
   }
 
   while (true) {
@@ -66,6 +67,11 @@ void Start(const Config config) {
 
     spdlog::info("Received {} bytes from client.", bytes_read);
 
+    const internals::Request request(buffer);
+
+    spdlog::info("Request method: {}", request.method().ToString());
+    spdlog::info("Request path: {}", request.path().string());
+
     const std::string response =
         "HTTP/1.1 200 OK\r\n"
         "Content-Length: 13\r\n"
@@ -75,7 +81,7 @@ void Start(const Config config) {
 
     const ssize_t bytes_sent = client.Send(response.c_str(), response.length());
 
-    spdlog::info("Sent {} bytes to client: {}", bytes_sent, response);
+    spdlog::info("Sent {} bytes to client.", bytes_sent);
   }
   // ReSharper disable once CppDFAUnreachableCode
 }

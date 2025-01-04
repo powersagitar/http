@@ -63,7 +63,7 @@ void Client() {
 
 }  // namespace
 
-TEST(Socket, ReadWrite) {
+TEST(TcpSocket, ReadWrite) {
   auto server_future = std::async(std::launch::async, Server);
   auto client_future = std::async(std::launch::async, Client);
 
