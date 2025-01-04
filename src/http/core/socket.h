@@ -129,6 +129,7 @@ class SocketServer {
                      .sin_addr = sin_addr,
                      .sin_zero{0}};
 
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
     return bind(sockfd_, reinterpret_cast<sockaddr *>(&addr), sizeof(addr));
   }
 
