@@ -11,6 +11,20 @@ set(CLI_EXE_NAME ${PROJECT_NAME}-cli)
 set(LIB_SRC_DIR "src/http/core")
 set(CLI_EXE_SRC_DIR "src/http/cli")
 
+include(FetchContent)
+
+FetchContent_Declare(
+        spdlog
+        URL https://github.com/gabime/spdlog/archive/refs/tags/v1.15.0.tar.gz
+        FIND_PACKAGE_ARGS NAMES spdlog
+)
+
+FetchContent_MakeAvailable(spdlog)
+
+include_directories(
+        src
+)
+
 add_library(${LIB_NAME} SHARED)
 
 target_sources(
@@ -18,9 +32,9 @@ target_sources(
         ${LIB_SRC_DIR}/socket.cc
 )
 
-include_directories(
-        include
-        src
+target_link_libraries(
+        ${LIB_NAME}
+        spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>
 )
 
 add_executable(${CLI_EXE_NAME})
@@ -39,6 +53,7 @@ target_sources(
 target_link_libraries(
         ${CLI_EXE_NAME}
         ${LIB_NAME}
+        spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>
 )
 
 add_subdirectory(tests)
