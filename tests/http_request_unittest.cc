@@ -9,14 +9,22 @@
 
 #include <filesystem>
 
-namespace {
-std::string request_str = "GET / HTTP/1.1\r\n";
-}
+TEST(HttpRequest, Get) {
+  const std::string request_str = "GET / HTTP/1.1\r\n";
 
-TEST(HttpRequest, Method) {
   const http::internals::Request request(
       std::vector<char>(request_str.cbegin(), request_str.cend()));
 
   EXPECT_EQ(request.method(), http::internals::Method::kGet);
+  EXPECT_EQ(request.path(), std::filesystem::path("/"));
+}
+
+TEST(HttpRequest, UnsupportedMethod) {
+  const std::string request_str = "POST / HTTP/1.1\r\n";
+
+  const http::internals::Request request(
+      std::vector<char>(request_str.cbegin(), request_str.cend()));
+
+  EXPECT_EQ(request.method(), http::internals::Method::kUnsupported);
   EXPECT_EQ(request.path(), std::filesystem::path("/"));
 }
