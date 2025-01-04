@@ -3,7 +3,7 @@
 //
 
 #include <gtest/gtest.h>
-#include <http/http.h>
+#include <http/core/socket.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 
@@ -15,6 +15,7 @@
 namespace {
 
 constexpr int kBufSize = 1024;
+constexpr int kHTTPPort = 80;
 constexpr std::string server_expects_to_receive = "Hello, World!";
 
 void Server() {
@@ -31,7 +32,7 @@ void Server() {
     }
   }();
 
-  std::array<char, kBufSize> server_received;
+  std::array<char, kBufSize> server_received{};
 
   const ssize_t bytes_read =
       accepted_client.Read(server_received.data(), kBufSize - 1);
@@ -47,9 +48,10 @@ void Client() {
   const int client = socket(PF_INET, SOCK_STREAM, 0);
   ASSERT_GT(client, -1);
 
-  sockaddr_in addr{.sin_family = AF_INET, .sin_port = 80, .sin_zero{0}};
+  sockaddr_in addr{.sin_family = AF_INET, .sin_port = kHTTPPort, .sin_zero{0}};
   ASSERT_EQ(inet_aton("127.0.0.1", &addr.sin_addr), 1);
 
+  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
   ASSERT_EQ(connect(client, reinterpret_cast<sockaddr *>(&addr), sizeof(addr)),
             0);
 
@@ -59,7 +61,7 @@ void Client() {
 
 }  // namespace
 
-TEST(Socket, AcceptIncomingConnections) {
+TEST(Socket, ReadWrite) {
   auto server_future = std::async(std::launch::async, Server);
   auto client_future = std::async(std::launch::async, Client);
 
