@@ -21,16 +21,16 @@ constexpr int kHTTPPort = 80;
 constexpr std::string server_expects_to_receive = "Hello, World!";
 
 void Server() {
-  http::SocketServer server;
+  http::TcpServer server;
   ASSERT_EQ(server.Bind(), 0);
   ASSERT_EQ(server.Listen(), 0);
 
-  const http::SocketClient accepted_client = [&server] {
+  const http::TcpClient accepted_client = [&server] {
     try {
       return server.Accept();
     } catch (const std::system_error &e) {
       [&e] { FAIL() << e.what(); }();
-      return http::SocketClient(0, {}, 0);
+      return http::TcpClient(0, {}, 0);
     }
   }();
 

@@ -4,27 +4,18 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-#include <http/core/socket.h>
+#include <http/core/http.h>
+#include <sys/socket.h>
 
-#include <array>
-#include <iostream>
+#include <cstdint>
 
-int main() {
-  const http::SocketServer server;
-  server.Bind();
-  server.Listen(1);
+#include "spdlog/spdlog.h"
 
-  const http::SocketClient client = server.Accept();
+[[noreturn]] int main() {
+  constexpr size_t kBufferSize = 1024;
+  constexpr uint16_t kPortHost = 80;
 
-  constexpr size_t kBufSize = 1024;
+  spdlog::set_level(spdlog::level::trace);
 
-  std::array<char, kBufSize> buf{'\0'};
-
-  const ssize_t bytes_read =
-      client.Read(static_cast<void *>(buf.data()), kBufSize - 1);
-  buf.at(bytes_read) = '\0';
-
-  std::cout << "Server received: " << buf.data() << "\n";
-
-  return 0;
+  http::Start({.buffer_size = kBufferSize, .port = htons(kPortHost)});
 }

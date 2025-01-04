@@ -29,7 +29,9 @@ add_library(${LIB_NAME} SHARED)
 
 target_sources(
         ${LIB_NAME} PRIVATE
-        ${LIB_SRC_DIR}/socket.cc
+        ${LIB_SRC_DIR}/tcp.cc
+        ${LIB_SRC_DIR}/status_code.cc
+        ${LIB_SRC_DIR}/http.cc
 )
 
 target_link_libraries(

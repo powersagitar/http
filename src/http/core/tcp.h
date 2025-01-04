@@ -13,7 +13,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#include <system_error>
+#include "spdlog/spdlog.h"
 
 namespace http {
 
@@ -24,14 +24,14 @@ constexpr int kHTTPPort = 80;
 
 }  // namespace internals
 
-class SocketClient {
+class TcpClient {
  public:
-  SocketClient(const SocketClient &) = delete;
-  SocketClient &operator=(const SocketClient &) = delete;
+  TcpClient(const TcpClient &) = delete;
+  TcpClient &operator=(const TcpClient &) = delete;
 
-  SocketClient(SocketClient &&obj) noexcept { *this = std::move(obj); }
+  TcpClient(TcpClient &&obj) noexcept { *this = std::move(obj); }
 
-  SocketClient &operator=(SocketClient &&rhs) noexcept {
+  TcpClient &operator=(TcpClient &&rhs) noexcept {
     if (this == &rhs) {
       return *this;
     }
@@ -42,11 +42,11 @@ class SocketClient {
     return *this;
   }
 
-  SocketClient(const int sockfd, const sockaddr_in addr,
-               const socklen_t addr_len) noexcept
+  TcpClient(const int sockfd, const sockaddr_in addr,
+            const socklen_t addr_len) noexcept
       : sockfd_(sockfd), addr_(addr), addr_len_(addr_len) {}
 
-  ~SocketClient() noexcept {
+  ~TcpClient() noexcept {
     if (sockfd_ == internals::kNullSock) {
       return;
     }
@@ -59,9 +59,17 @@ class SocketClient {
     }
   }
 
-  ssize_t Read(void *const buf, const ssize_t buf_size) const noexcept {
-    return read(sockfd_, buf, buf_size);
+  ssize_t Recv(void *const buffer, const size_t length,
+               const int flags = 0) const noexcept {
+    return recv(sockfd_, buffer, length, flags);
   }
+
+  ssize_t Send(const void *const buffer, const size_t length,
+               const int flags = 0) const noexcept {
+    return send(sockfd_, buffer, length, flags);
+  }
+
+  [[nodiscard]] int sockfd() const noexcept { return sockfd_; }
 
  private:
   int sockfd_ = internals::kNullSock;
@@ -69,7 +77,7 @@ class SocketClient {
   socklen_t addr_len_{};
 };
 
-class SocketServer {
+class TcpServer {
  public:
   /**
    * See man protocols(5)
@@ -81,12 +89,12 @@ class SocketServer {
   /**
    * SocketServer is uniquely owned. No two instances may share the same socket.
    */
-  SocketServer(const SocketServer &) = delete;
-  SocketServer &operator=(const SocketServer &) = delete;
+  TcpServer(const TcpServer &) = delete;
+  TcpServer &operator=(const TcpServer &) = delete;
 
-  SocketServer(SocketServer &&obj) noexcept { *this = std::move(obj); }
+  TcpServer(TcpServer &&obj) noexcept { *this = std::move(obj); }
 
-  SocketServer &operator=(SocketServer &&rhs) noexcept {
+  TcpServer &operator=(TcpServer &&rhs) noexcept {
     if (this == &rhs) {
       return *this;
     }
@@ -100,14 +108,14 @@ class SocketServer {
   /**
    * See man socket(2)
    */
-  SocketServer() noexcept
+  TcpServer() noexcept
       : sockfd_(socket(PF_INET, SOCK_STREAM, static_cast<int>(Protocol::kIP))) {
   }
 
   /**
    * See man close(2)
    */
-  ~SocketServer() noexcept {
+  ~TcpServer() noexcept {
     if (sockfd_ == internals::kNullSock) {
       return;
     }
@@ -145,9 +153,9 @@ class SocketServer {
   /**
    * See man accept(2)
    */
-  [[nodiscard]] SocketClient Accept() const {
+  [[nodiscard]] TcpClient Accept() const {
     sockaddr_in addr{};
-    socklen_t addr_len{};
+    socklen_t addr_len = sizeof addr;
 
     const int client_sockfd =
         // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
