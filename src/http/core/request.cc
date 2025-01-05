@@ -19,6 +19,12 @@ namespace http::internals {
 HttpHeaderFields::HttpHeaderFields(
     std::istringstream &buffer_istream) noexcept {
   for (std::string line; std::getline(buffer_istream, line);) {
+    boost::algorithm::trim(line);
+
+    if (line.empty()) {
+      break;
+    }
+
     const size_t colon_idx = line.find(':');
     std::string key = line.substr(0, colon_idx);
     std::string value = line.substr(colon_idx + 1);
