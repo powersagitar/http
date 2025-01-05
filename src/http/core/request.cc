@@ -28,5 +28,10 @@ Request::Request(const std::vector<char> &buffer) noexcept {
   buffer_stream >> path_str;
 
   path_ = std::filesystem::path(path_str);
+
+  std::string version_str;
+  buffer_stream >> version_str;
+
+  version_ = HttpVersion(version_str);
 }
 }  // namespace http::internals
