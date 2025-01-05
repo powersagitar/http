@@ -21,13 +21,23 @@ FetchContent_Declare(
         FIND_PACKAGE_ARGS NAMES spdlog
 )
 
-FetchContent_MakeAvailable(spdlog)
+FetchContent_Declare(
+        boost
+        URL https://archives.boost.io/release/1.87.0/source/boost_1_87_0.tar.bz2
+)
+
+FetchContent_MakeAvailable(spdlog boost)
 
 include_directories(
         src
 )
 
 add_library(${LIB_NAME} SHARED)
+
+target_include_directories(
+        ${LIB_NAME} PRIVATE
+        ${FETCHCONTENT_BASE_DIR}/boost-src
+)
 
 target_sources(
         ${LIB_NAME} PRIVATE

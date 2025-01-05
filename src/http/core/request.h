@@ -8,6 +8,8 @@
 #define REQUEST_H
 
 #include <filesystem>
+#include <sstream>
+#include <string>
 #include <string_view>
 #include <unordered_map>
 #include <vector>
@@ -67,18 +69,45 @@ class HttpVersion {
   VersionEnum version_;
 };
 
+class HttpHeaderFields {
+ public:
+  HttpHeaderFields() = default;
+
+  explicit HttpHeaderFields(std::istringstream &buffer_istream) noexcept;
+
+  [[nodiscard]] bool Contains(const std::string &key) const noexcept {
+    return fields_.contains(key);
+  }
+
+  [[nodiscard]] std::string_view operator[](const std::string &key) const {
+    return fields_.at(key);
+  }
+
+  [[nodiscard]] size_t Size() const noexcept { return fields_.size(); }
+
+ private:
+  std::unordered_map<std::string, std::string> fields_;
+};
+
 class Request {
  public:
   explicit Request(const std::vector<char> &buffer) noexcept;
 
   [[nodiscard]] HttpMethod method() const noexcept { return method_; }
+
   [[nodiscard]] std::filesystem::path path() const noexcept { return path_; }
+
   [[nodiscard]] HttpVersion version() const noexcept { return version_; };
+
+  [[nodiscard]] const HttpHeaderFields &header_fields() const noexcept {
+    return header_fields_;
+  }
 
  private:
   HttpMethod method_;
   std::filesystem::path path_;
   HttpVersion version_;
+  HttpHeaderFields header_fields_;
 };
 }  // namespace http::internals
 
