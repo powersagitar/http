@@ -42,7 +42,7 @@ Request::Request(const std::vector<char> &buffer) noexcept {
   std::string path_str;
   buffer_istream >> path_str;
 
-  path_ = std::filesystem::path(path_str);
+  path_ = std::move(std::filesystem::path(path_str));
 
   std::string version_str;
   buffer_istream >> version_str;
@@ -52,7 +52,6 @@ Request::Request(const std::vector<char> &buffer) noexcept {
   // Ignore the rest of the first line
   buffer_istream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-  // TODO: move
-  header_fields_ = HttpHeaderFields(buffer_istream);
+  header_fields_ = std::move(HttpHeaderFields(buffer_istream));
 }
 }  // namespace http::internals
