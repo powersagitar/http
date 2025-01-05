@@ -15,7 +15,7 @@ TEST(HttpRequest, Get) {
   const http::internals::Request request(
       std::vector<char>(request_str.cbegin(), request_str.cend()));
 
-  EXPECT_EQ(request.method(), http::internals::Method::kGet);
+  EXPECT_EQ(request.method(), http::internals::HttpMethod::kGet);
   EXPECT_EQ(request.path(), std::filesystem::path("/"));
   EXPECT_EQ(request.version(), http::internals::HttpVersion::k1_1);
 }
@@ -26,7 +26,7 @@ TEST(HttpRequest, UnsupportedMethod) {
   const http::internals::Request request(
       std::vector<char>(request_str.cbegin(), request_str.cend()));
 
-  EXPECT_EQ(request.method(), http::internals::Method::kUnsupported);
+  EXPECT_EQ(request.method(), http::internals::HttpMethod::kUnsupported);
   EXPECT_EQ(request.path(), std::filesystem::path("/"));
   EXPECT_EQ(request.version(), http::internals::HttpVersion::k1_1);
 }

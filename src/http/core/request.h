@@ -13,13 +13,13 @@
 #include <vector>
 
 namespace http::internals {
-class Method {
+class HttpMethod {
  public:
   enum MethodEnum { kGet, kUnsupported };
 
-  Method() noexcept : method_(kUnsupported) {}
+  HttpMethod() noexcept : method_(kUnsupported) {}
 
-  explicit Method(const std::string_view str) noexcept {
+  explicit HttpMethod(const std::string_view str) noexcept {
     std::unordered_map<std::string_view, MethodEnum> map{{"GET", kGet}};
 
     method_ = map.contains(str) ? map[str] : kUnsupported;
@@ -71,12 +71,12 @@ class Request {
  public:
   explicit Request(const std::vector<char> &buffer) noexcept;
 
-  [[nodiscard]] Method method() const noexcept { return method_; }
+  [[nodiscard]] HttpMethod method() const noexcept { return method_; }
   [[nodiscard]] std::filesystem::path path() const noexcept { return path_; }
   [[nodiscard]] HttpVersion version() const noexcept { return version_; };
 
  private:
-  Method method_;
+  HttpMethod method_;
   std::filesystem::path path_;
   HttpVersion version_;
 };

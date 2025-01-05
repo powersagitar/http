@@ -22,7 +22,7 @@ Request::Request(const std::vector<char> &buffer) noexcept {
   std::string method_str;
   buffer_stream >> method_str;
 
-  method_ = Method(method_str);
+  method_ = HttpMethod(method_str);
 
   std::string path_str;
   buffer_stream >> path_str;
