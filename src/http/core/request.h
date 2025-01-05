@@ -7,49 +7,45 @@
 #ifndef REQUEST_H
 #define REQUEST_H
 
-#include <algorithm>
 #include <filesystem>
-#include <string>
+#include <string_view>
 #include <unordered_map>
 #include <vector>
 
 namespace http::internals {
 class Method {
  public:
-  enum _Method { kGet, kUnsupported };
+  enum MethodEnum { kGet, kUnsupported };
 
   Method() noexcept : method_(kUnsupported) {}
 
-  Method(std::string str) noexcept {
-    std::transform(str.begin(), str.end(), str.begin(),
-                   [](char c) { return std::tolower(c); });
-
-    std::unordered_map<std::string_view, _Method> map{{"get", _Method::kGet}};
+  explicit Method(const std::string_view str) noexcept {
+    std::unordered_map<std::string_view, MethodEnum> map{{"GET", kGet}};
 
     method_ = map.contains(str) ? map[str] : kUnsupported;
   }
 
-  bool operator==(const _Method method) const noexcept {
+  bool operator==(const MethodEnum method) const noexcept {
     return method_ == method;
   }
 
-  std::string_view ToString() const noexcept {
-    std::unordered_map<_Method, std::string_view> map{
-        {_Method::kGet, "GET"}, {kUnsupported, "UNSUPPORTED"}};
+  [[nodiscard]] std::string_view ToString() const noexcept {
+    std::unordered_map<MethodEnum, std::string_view> map{
+        {kGet, "GET"}, {kUnsupported, "UNSUPPORTED"}};
 
     return map[method_];
   }
 
  private:
-  _Method method_;
+  MethodEnum method_;
 };
 
 class Request {
  public:
   explicit Request(const std::vector<char> &buffer) noexcept;
 
-  Method method() const noexcept { return method_; }
-  std::filesystem::path path() const noexcept { return path_; }
+  [[nodiscard]] Method method() const noexcept { return method_; }
+  [[nodiscard]] std::filesystem::path path() const noexcept { return path_; }
 
  private:
   Method method_;
