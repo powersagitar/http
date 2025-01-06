@@ -10,6 +10,7 @@
 
 #include "http.h"
 
+#include <cstdlib>
 #include <string>
 #include <vector>
 
@@ -30,6 +31,7 @@ void Start(const Config config) {
     spdlog::info("Server socket bound successfully.");
   } else {
     spdlog::critical("Server socket failed to bind.");
+    std::exit(EXIT_FAILURE);
   }
 
   spdlog::info("Listening on server socket...");
@@ -39,6 +41,7 @@ void Start(const Config config) {
     spdlog::info("Listening on server socket.");
   } else {
     spdlog::critical("Failed to listen on server socket.");
+    std::exit(EXIT_FAILURE);
   }
 
   while (true) {
