@@ -36,6 +36,19 @@ HttpHeaderFields::HttpHeaderFields(
   }
 }
 
+std::string HttpHeaderFields::ToString() const noexcept {
+  std::string str;
+
+  for (const auto &[key, value] : fields_) {
+    str += key + ": " + value + "\n";
+  }
+
+  // Remove final line feed character
+  str.pop_back();
+
+  return str;
+}
+
 Request::Request(const std::vector<char> &buffer) noexcept {
   const std::string buffer_str(buffer.cbegin(), buffer.cend());
   std::istringstream buffer_istream(buffer_str);

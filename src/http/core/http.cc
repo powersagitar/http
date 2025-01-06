@@ -71,6 +71,9 @@ void Start(const Config config) {
 
     spdlog::info("Request method: {}", request.method().ToString());
     spdlog::info("Request path: {}", request.path().string());
+    spdlog::info("Request http version: {}", request.version().ToString());
+    spdlog::info("Request header fields: \n{}",
+                 request.header_fields().ToString());
 
     const std::string response =
         "HTTP/1.1 200 OK\r\n"

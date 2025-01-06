@@ -85,6 +85,8 @@ class HttpHeaderFields {
 
   [[nodiscard]] size_t Size() const noexcept { return fields_.size(); }
 
+  [[nodiscard]] std::string ToString() const noexcept;
+
  private:
   std::unordered_map<std::string, std::string> fields_;
 };
