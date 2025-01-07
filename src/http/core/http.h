@@ -7,6 +7,10 @@
 #ifndef HTTP_H
 #define HTTP_H
 
+// Required by in_port_t
+// ReSharper disable once CppUnusedIncludeDirective
+#include <netinet/in.h>
+
 #include <cstddef>
 #include <filesystem>
 
