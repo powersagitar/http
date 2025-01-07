@@ -9,6 +9,7 @@
 
 #include <cstddef>
 #include <filesystem>
+#include <ranges>
 #include <string>
 #include <unordered_map>
 #include <vector>
