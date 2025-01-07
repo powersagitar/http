@@ -32,14 +32,17 @@ FetchContent_MakeAvailable(spdlog boost)
 set(BOOST_SRC_DIR ${FETCHCONTENT_BASE_DIR}/boost-src)
 set(BOOST_BINARIES_DIR ${FETCHCONTENT_BASE_DIR}/boost-build)
 
-execute_process(
+add_custom_command(
+        OUTPUT ${BOOST_SRC_DIR}/b2
         COMMAND ./bootstrap.sh --prefix=${BOOST_BINARIES_DIR}
         WORKING_DIRECTORY ${BOOST_SRC_DIR}
 )
 
-execute_process(
+add_custom_command(
+        DEPENDS ${BOOST_SRC_DIR}/b2
+        OUTPUT ${BOOST_BINARIES_DIR}/lib/libboost_program_options.dylib
         COMMAND ./b2 install
-        WORKING_DIRECTORY ${BOOST_BINARIES_DIR}
+        WORKING_DIRECTORY ${BOOST_SRC_DIR}
 )
 
 include_directories(
