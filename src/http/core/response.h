@@ -7,9 +7,9 @@
 #ifndef RESPONSE_H
 #define RESPONSE_H
 
+#include <algorithm>
 #include <cstddef>
 #include <filesystem>
-#include <ranges>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -87,9 +87,11 @@ class ResponseHtml final : public Response {
     const std::string body = "404 Not Found";
     std::vector<std::byte> body_bytes(body.length());
 
-    std::ranges::transform(body, body_bytes.begin(), [](const char character) {
-      return static_cast<std::byte>(character);
-    });
+    // TODO: std::ranges::transform to be investigated
+    // ReSharper disable once CppUseRangeAlgorithm
+    std::transform(
+        body.cbegin(), body.cend(), body_bytes.begin(),
+        [](const char character) { return static_cast<std::byte>(character); });
 
     return body_bytes;
   }
