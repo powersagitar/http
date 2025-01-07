@@ -77,33 +77,12 @@ void Start(const Config &config) {
     spdlog::info("Request header fields: \n{}",
                  request.header_fields().ToString());
 
-    std::filesystem::path path = config.cwd / request.path();
+    const std::vector<std::byte> &response_bytes =
+        internals::ConstructResponseBytes(request.path(), config.cwd);
 
-    std::unique_ptr<internals::Response> response =
-        internals::ConstructResponse(path);
-
-    std::string response_header_str;
-
-    const std::vector<std::byte> &response_body = response->GetBody();
-
-    response_header_str += "HTTP/1.1 200 OK\r\n";
-    response_header_str +=
-        "Content-Length: " + std::to_string(response_body.size()) + "\r\n";
-    response_header_str += "Content-Type: " + response->GetMimeType() + "\r\n";
-    response_header_str += "\r\n";
-
-    std::vector<std::byte> response_bytes;
-    response_bytes.reserve(response_header_str.size() + response_body.size());
-
-    std::ranges::transform(
-        response_header_str.cbegin(), response_header_str.cend(),
-        std::back_inserter(response_bytes), [](const char character) {
-          spdlog::debug("transformed: {}", static_cast<std::byte>(character));
-          return static_cast<std::byte>(character);
-        });
-
-    response_bytes.insert(response_bytes.end(), response_body.cbegin(),
-                          response_body.cend());
+    for (const auto &byte : response_bytes) {
+      spdlog::debug("Response byte: {}", static_cast<char>(byte));
+    }
 
     const ssize_t bytes_sent =
         client.Send(response_bytes.data(), response_bytes.size());

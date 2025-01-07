@@ -7,8 +7,6 @@
 #ifndef HTTP_H
 #define HTTP_H
 
-#include <netinet/in.h>
-
 #include <cstddef>
 #include <filesystem>
 
