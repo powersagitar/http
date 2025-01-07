@@ -51,7 +51,7 @@ class Response {
   virtual std::vector<std::byte> GetBody() const noexcept = 0;
 };
 
-class ResponseNotFound : public Response {
+class ResponseNotFound final : public Response {
  public:
   ~ResponseNotFound() override = default;
 
@@ -73,7 +73,7 @@ class ResponseNotFound : public Response {
   }
 };
 
-class ResponseHtml : public Response {
+class ResponseHtml final : public Response {
  public:
   ~ResponseHtml() override = default;
 
@@ -87,9 +87,9 @@ class ResponseHtml : public Response {
     const std::string body = "404 Not Found";
     std::vector<std::byte> body_bytes(body.length());
 
-    std::ranges::transform(
-        body.cbegin(), body.cend(), body_bytes.begin(),
-        [](const char character) { return static_cast<std::byte>(character); });
+    std::ranges::transform(body, body_bytes.begin(), [](const char character) {
+      return static_cast<std::byte>(character);
+    });
 
     return body_bytes;
   }
