@@ -45,6 +45,11 @@ add_custom_command(
         WORKING_DIRECTORY ${BOOST_SRC_DIR}
 )
 
+add_custom_target(
+        boost-program-options
+        DEPENDS ${BOOST_BINARIES_DIR}/lib/libboost_program_options.dylib
+)
+
 include_directories(
         src
 )
@@ -75,6 +80,11 @@ set_target_properties(
         ${CLI_EXE_NAME}
         PROPERTIES
         OUTPUT_NAME ${PROJECT_NAME}
+)
+
+add_dependencies(
+        ${CLI_EXE_NAME}
+        boost-program-options
 )
 
 target_include_directories(
