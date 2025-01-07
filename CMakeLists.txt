@@ -28,6 +28,20 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(spdlog boost)
 
+# Build Boost binaries
+set(BOOST_SRC_DIR ${FETCHCONTENT_BASE_DIR}/boost-src)
+set(BOOST_BINARIES_DIR ${FETCHCONTENT_BASE_DIR}/boost-build)
+
+execute_process(
+        COMMAND ./bootstrap.sh --prefix=${BOOST_BINARIES_DIR}
+        WORKING_DIRECTORY ${BOOST_SRC_DIR}
+)
+
+execute_process(
+        COMMAND ./b2 install
+        WORKING_DIRECTORY ${BOOST_BINARIES_DIR}
+)
+
 include_directories(
         src
 )
@@ -36,7 +50,7 @@ add_library(${LIB_NAME} SHARED)
 
 target_include_directories(
         ${LIB_NAME} PRIVATE
-        ${FETCHCONTENT_BASE_DIR}/boost-src
+        ${BOOST_SRC_DIR}
 )
 
 target_sources(
@@ -60,6 +74,11 @@ set_target_properties(
         OUTPUT_NAME ${PROJECT_NAME}
 )
 
+target_include_directories(
+        ${CLI_EXE_NAME} PRIVATE
+        ${BOOST_SRC_DIR}
+)
+
 target_sources(
         ${CLI_EXE_NAME} PRIVATE
         ${CLI_EXE_SRC_DIR}/main.cc
@@ -69,6 +88,7 @@ target_link_libraries(
         ${CLI_EXE_NAME}
         ${LIB_NAME}
         spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>
+        ${BOOST_BINARIES_DIR}/lib/libboost_program_options.dylib
 )
 
 add_subdirectory(tests)
