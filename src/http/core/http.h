@@ -10,14 +10,16 @@
 #include <netinet/in.h>
 
 #include <cstddef>
+#include <filesystem>
 
 namespace http {
 struct Config {
   size_t buffer_size;
   in_port_t port;
+  std::filesystem::path cwd;
 };
 
-[[noreturn]] void Start(Config config);
+[[noreturn]] void Start(const Config &config);
 }  // namespace http
 
 #endif  // HTTP_H

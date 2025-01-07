@@ -17,5 +17,7 @@
 
   spdlog::set_level(spdlog::level::trace);
 
-  http::Start({.buffer_size = kBufferSize, .port = htons(kPortHost)});
+  http::Start({.buffer_size = kBufferSize,
+               .port = htons(kPortHost),
+               .cwd = "/tmp/http-cwd"});
 }

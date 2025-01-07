@@ -4,10 +4,6 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-//
-// Created by powersagitar on 1/3/25.
-//
-
 #include "http.h"
 
 #include <cstdlib>
@@ -15,11 +11,12 @@
 #include <vector>
 
 #include "request.h"
+#include "response.h"
 #include "spdlog/spdlog.h"
 #include "tcp.h"
 
 namespace http {
-void Start(const Config config) {
+void Start(const Config &config) {
   const http::TcpServer server;
 
   spdlog::info("Binding server socket...");
@@ -68,7 +65,9 @@ void Start(const Config config) {
     const ssize_t bytes_read =
         client.Recv(buffer.data(), static_cast<ssize_t>(buffer.size()));
 
-    spdlog::info("Received {} bytes from client.", bytes_read);
+    if (bytes_read <= 0) {
+      spdlog::error("Failed to read request from client.");
+    }
 
     const internals::Request request(buffer);
 
@@ -78,16 +77,40 @@ void Start(const Config config) {
     spdlog::info("Request header fields: \n{}",
                  request.header_fields().ToString());
 
-    const std::string response =
-        "HTTP/1.1 200 OK\r\n"
-        "Content-Length: 13\r\n"
-        "Content-Type: text/plain\r\n"
-        "\r\n"
-        "Hello, World!";
+    std::filesystem::path path = config.cwd / request.path();
 
-    const ssize_t bytes_sent = client.Send(response.c_str(), response.length());
+    std::unique_ptr<internals::Response> response =
+        internals::ConstructResponse(path);
 
-    spdlog::info("Sent {} bytes to client.", bytes_sent);
+    std::string response_header_str;
+
+    const std::vector<std::byte> &response_body = response->GetBody();
+
+    response_header_str += "HTTP/1.1 200 OK\r\n";
+    response_header_str +=
+        "Content-Length: " + std::to_string(response_body.size()) + "\r\n";
+    response_header_str += "Content-Type: " + response->GetMimeType() + "\r\n";
+    response_header_str += "\r\n";
+
+    std::vector<std::byte> response_bytes;
+    response_bytes.reserve(response_header_str.size() + response_body.size());
+
+    std::ranges::transform(
+        response_header_str.cbegin(), response_header_str.cend(),
+        std::back_inserter(response_bytes), [](const char character) {
+          spdlog::debug("transformed: {}", static_cast<std::byte>(character));
+          return static_cast<std::byte>(character);
+        });
+
+    response_bytes.insert(response_bytes.end(), response_body.cbegin(),
+                          response_body.cend());
+
+    const ssize_t bytes_sent =
+        client.Send(response_bytes.data(), response_bytes.size());
+
+    if (bytes_sent <= 0) {
+      spdlog::error("Failed to send response to client.");
+    }
   }
   // ReSharper disable once CppDFAUnreachableCode
 }

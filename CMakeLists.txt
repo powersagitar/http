@@ -43,7 +43,7 @@ target_sources(
         ${LIB_NAME} PRIVATE
         ${LIB_SRC_DIR}/http.cc
         ${LIB_SRC_DIR}/request.cc
-        ${LIB_SRC_DIR}/status_code.cc
+        ${LIB_SRC_DIR}/response.cc
         ${LIB_SRC_DIR}/tcp.cc
 )
 
