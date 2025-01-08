@@ -7,7 +7,6 @@
 #include "http.h"
 
 #include <cstdlib>
-#include <string>
 #include <vector>
 
 #include "request.h"
@@ -24,7 +23,7 @@ void Start(const Config &config) {
   spdlog::debug("sin_port: {}", config.port);
   spdlog::debug("sin_addr: INADDR_ANY");
 
-  if (server.Bind(AF_INET, config.port, {INADDR_ANY}) == 0) {
+  if (server.Bind(AF_INET, htons(config.port), {INADDR_ANY}) == 0) {
     spdlog::info("Server socket bound successfully.");
   } else {
     spdlog::critical("Server socket failed to bind.");
@@ -79,10 +78,6 @@ void Start(const Config &config) {
 
     const std::vector<std::byte> &response_bytes =
         internals::ConstructResponseBytes(request.path(), config.cwd);
-
-    for (const auto &byte : response_bytes) {
-      spdlog::debug("Response byte: {}", static_cast<char>(byte));
-    }
 
     const ssize_t bytes_sent =
         client.Send(response_bytes.data(), response_bytes.size());

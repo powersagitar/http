@@ -41,7 +41,7 @@ add_custom_command(
 add_custom_command(
         DEPENDS ${BOOST_SRC_DIR}/b2
         OUTPUT ${BOOST_BINARIES_DIR}/lib/libboost_program_options.dylib
-        COMMAND ./b2 install
+        COMMAND ./b2 install --with-program_options
         WORKING_DIRECTORY ${BOOST_SRC_DIR}
 )
 
@@ -97,11 +97,16 @@ target_sources(
         ${CLI_EXE_SRC_DIR}/main.cc
 )
 
+target_link_directories(
+        ${CLI_EXE_NAME} PRIVATE
+        ${BOOST_BINARIES_DIR}/lib/
+)
+
 target_link_libraries(
         ${CLI_EXE_NAME}
         ${LIB_NAME}
         spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>
-        ${BOOST_BINARIES_DIR}/lib/libboost_program_options.dylib
+        boost_program_options
 )
 
 add_subdirectory(tests)
