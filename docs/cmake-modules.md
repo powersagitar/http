@@ -16,7 +16,7 @@ It exports a few Boost-related variables and library targets as requested.
 - `BOOST_SRC_DIR` -- Path to the downloaded Boost source directory.
 - `BOOST_INCLUDE_DIR` -- Boost include directory. I.e., directory for `-I` compiler
   flag.
-- `BOOST_BUILD_DIR` -- Directory where Boost is installed.
+- `BOOST_INSTALL_DIR` -- Directory where Boost is installed to.
 - `BOOST_LIB_DIR` -- Boost library directory. I.e., directory for `-L` compiler
   flag.
 - `BOOST_B2_DIR` -- Where [b2](https://www.boost.org/doc/libs/1_87_0/tools/build/doc/html/index.html)
@@ -37,9 +37,9 @@ of a Boost component.
 To read more, see [Stack Overflow
 answer](https://stackoverflow.com/a/4716251/20143641).
 
-#### build_boost_components()
+#### export_boost_components()
 
-Build and export components specified in `BOOST_COMPONENTS`. Function is meant
+Export components specified in `BOOST_COMPONENTS`. Function is meant
 to be called after all components have been added.
 
 It exports a shared library target for each component, in the name of

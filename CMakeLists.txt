@@ -33,7 +33,7 @@ include(FetchBoost)
 
 add_boost_component(program_options)
 
-build_boost_components()
+export_boost_components()
 
 add_library(${LIB_NAME} SHARED)
 

@@ -9,14 +9,14 @@ FetchContent_MakeAvailable(boost)
 
 set(BOOST_SRC_DIR ${FETCHCONTENT_BASE_DIR}/boost-src)
 set(BOOST_INCLUDE_DIR ${BOOST_SRC_DIR})
-set(BOOST_BUILD_DIR ${FETCHCONTENT_BASE_DIR}/boost-build)
-set(BOOST_LIB_DIR ${BOOST_BUILD_DIR}/lib)
+set(BOOST_INSTALL_DIR ${FETCHCONTENT_BASE_DIR}/boost-build)
+set(BOOST_LIB_DIR ${BOOST_INSTALL_DIR}/lib)
 set(BOOST_B2_DIR ${BOOST_SRC_DIR})
 set(BOOST_B2_PATH ${BOOST_B2_DIR}/b2)
 
 add_custom_command(
     OUTPUT ${BOOST_B2_PATH}
-    COMMAND ./bootstrap.sh --prefix=${BOOST_BUILD_DIR}
+    COMMAND ./bootstrap.sh --prefix=${BOOST_INSTALL_DIR}
     WORKING_DIRECTORY ${BOOST_SRC_DIR}
 )
 
@@ -29,7 +29,7 @@ function(add_boost_component component)
   set(BOOST_COMPONENTS ${BOOST_COMPONENTS} PARENT_SCOPE)
 endfunction()
 
-function(build_boost_components)
+function(export_boost_components)
   message("Building Boost components: ${BOOST_COMPONENTS}")
 
   set(boost_b2_args ${BOOST_COMPONENTS})
