@@ -37,3 +37,6 @@
 # CMake
 cmake-build-*
 build
+
+# Compiled Doxygen documentation
+doxygen-out
